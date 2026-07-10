@@ -195,7 +195,7 @@ class Mem0Adapter(MemoryAdapter):
                     "source": "a5c-ai/mcp-mem0",
                     "gap": "Long-term semantic memory with vector search",
                     "install": "pip install mem0ai>=2.0.11",
-                    "why": "Multi-level memory (user/session/agent), 60K GitHub stars, cuts token costs via intelligent filtering",
+                    "why": "Multi-level memory (user/session/agent), cuts token costs via intelligent filtering",
                 },
                 {
                     "name": "agent-memory-systems",
@@ -211,7 +211,7 @@ class Mem0Adapter(MemoryAdapter):
 class AutoMemoryAdapter(MemoryAdapter):
     """Auto-select best available adapter: mem0 → SQLite → JSONL.
 
-    Godlevel pattern from 60K⭐ mem0 ecosystem:
+    From mature mem0 ecosystem:
     - Silent on success: uses best tier available
     - Noisy on gaps: health() reports degradation with actionable fixes
     - Zero deps guaranteed: always degrades to JSONL

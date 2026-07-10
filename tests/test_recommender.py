@@ -81,10 +81,10 @@ def test_recommender_detect_python():
         assert shutil.which("python3") is not None or shutil.which("python") is not None
 
 
-def test_godlevel_recommendations_returns_skills_when_mem0_missing():
+def test_mature_recommendations_returns_skills_when_mem0_missing():
     with tempfile.TemporaryDirectory() as td:
         r = ToolRecommender(state_dir=td)
-        skills = r.godlevel_recommendations()
+        skills = r.mature_recommendations()
         for s in skills:
             assert hasattr(s, "name")
             assert hasattr(s, "source")
@@ -92,17 +92,17 @@ def test_godlevel_recommendations_returns_skills_when_mem0_missing():
             assert hasattr(s, "install_command")
 
 
-def test_health_report_includes_godlevel_when_gaps():
+def test_health_report_includes_mature_when_gaps():
     with tempfile.TemporaryDirectory() as td:
         r = ToolRecommender(state_dir=td)
         report = r.health_report()
-        godlevel_entries = [e for e in report if e.get("name") == "_godlevel_recommendations"]
-        # If mem0 is missing, godlevel entries appear
+        mature_entries = [e for e in report if e.get("name") == "_mature_recommendations"]
+        # If mem0 is missing, mature entries appear
         mem0_installed = any(
             e["name"] == "mem0" and e["installed"] for e in report
         )
         if not mem0_installed:
-            assert len(godlevel_entries) > 0
-            for entry in godlevel_entries:
+            assert len(mature_entries) > 0
+            for entry in mature_entries:
                 assert "skills" in entry
                 assert len(entry["skills"]) > 0

@@ -29,9 +29,9 @@ class ToolRecommendation:
 
 @dataclass
 class SkillRecommendation:
-    """External skill recommendation with provenance (godlevel pattern).
+    """External skill recommendation with provenance.
 
-    From 60K⭐ mem0 ecosystem and 250K⭐ superpowers:
+    From mature skill ecosystems:
     every gap surfaced is paired with an installable skill.
     """
 
@@ -40,18 +40,18 @@ class SkillRecommendation:
     gap: str  # What functionality is missing
     install_command: str
     why: str  # Why this skill fills the gap
-    stars: str = ""  # GitHub stars for credibility
+    stars: str = ""
 
 
 GODLEVEL_SKILLS: List[SkillRecommendation] = [
     SkillRecommendation(
         name="mem0-integration",
-        source="a5c-ai/mcp-mem0 (678⭐)",
+        source="a5c-ai/mcp-mem0",
         gap="Long-term semantic memory with vector search",
         install_command="pip install mem0ai>=2.0.11",
         why="Multi-level memory (user/session/agent) with adaptive personalization. "
-        "60K GitHub stars. Cuts token costs via intelligent filtering.",
-        stars="60K⭐",
+        "Cuts token costs via intelligent filtering.",
+        stars="",
     ),
     SkillRecommendation(
         name="agent-memory-systems",
@@ -74,7 +74,7 @@ RECOMMENDATIONS: List[ToolRecommendation] = [
     ToolRecommendation(
         name="mem0",
         category="memory",
-        description="Persistent cross-session memory with pgvector RAG (60K GitHub stars)",
+        description="Persistent cross-session memory with pgvector RAG",
         detect_command="python3 -c 'import mem0' 2>/dev/null",
         install_command="pip install mem0ai>=2.0.11",
         importance="recommended",
@@ -122,7 +122,7 @@ RECOMMENDATIONS: List[ToolRecommendation] = [
 class ToolRecommender:
     """Detect missing tools and recommend companion skills.
 
-    Godlevel pattern from supowers/superpowers (250K⭐):
+    From mature skill ecosystems:
     - Silent on success: no output for installed tools
     - Noisy on gaps: one-shot per-session recommendation of missing critical/recommended tools
     - Companion recommendations: suggest skills that work together
@@ -177,7 +177,7 @@ class ToolRecommender:
         lines.append("Run once, silent after. Configure: fuzzybee-config set recommend off")
         return "\n".join(lines)
 
-    def godlevel_recommendations(self) -> List[SkillRecommendation]:
+    def mature_recommendations(self) -> List[SkillRecommendation]:
         """Return god-level skill recommendations for detected gaps.
 
         Each gap is paired with a skill reference and provenance.
@@ -208,15 +208,15 @@ class ToolRecommender:
             }
             for t in RECOMMENDATIONS
         ]
-        godlevel = self.godlevel_recommendations()
-        if godlevel:
+        mature = self.mature_recommendations()
+        if mature:
             base.append({
-                "name": "_godlevel_recommendations",
+                "name": "_mature_recommendations",
                 "category": "skills",
                 "installed": True,
                 "skills": [
                     {"name": s.name, "source": s.source, "gap": s.gap, "why": s.why}
-                    for s in godlevel
+                    for s in mature
                 ],
             })
         return base

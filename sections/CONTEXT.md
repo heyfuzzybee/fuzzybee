@@ -11,7 +11,7 @@
 | **SLA** | Time and resource limits per cycle: 8 tool calls, 10 min wall clock, 3 gate failures. |
 | **STOP GATE** | Irreversible halt condition. S1–S4. |
 | **Decomposition** | Breaking a problem into verifiable units. 7 problem types, each with specific strategies. |
-| **mem0** | Universal memory layer (60K⭐). pgvector RAG for cross-session semantic recall. |
+| **mem0** | Universal memory layer. pgvector RAG for cross-session semantic recall. |
 | **Fallback chain** | mem0 → SQLite (WAL) → JSONL. Each tier degrades gracefully. |
 
 ## Gate Status

@@ -30,7 +30,7 @@
 ## Dependencies
 
 - Python 3.12+
-- mem0 (60K⭐) — pgvector RAG for persistent memory
+- mem0 — pgvector RAG for persistent memory
 - PostgreSQL 16+ with pgvector for mem0 backend
 - `http.server` + HTMX for dashboard (zero framework deps)
 - Expo (optional, for web dashboard mode)
