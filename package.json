@@ -1,0 +1,23 @@
+{
+  "name": "@heyfuzzybee/fuzzybee",
+  "version": "0.1.0",
+  "description": "Recursive verify skill for Claude Code",
+  "bin": {
+    "fuzzybee-execute": "bin/fuzzybee-execute"
+  },
+  "scripts": {
+    "postinstall": "bash scripts/fuzzybee-install.sh"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "scripts/",
+    "sections/",
+    "SKILL.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "keywords": ["claude", "skill", "verify", "execution"],
+  "license": "MIT"
+}

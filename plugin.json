@@ -1,0 +1,27 @@
+{
+  "name": "fuzzybee",
+  "version": "0.1.0",
+  "description": "Recursive verify skill with evidence gates",
+  "tools": [
+    {
+      "name": "fuzzybee_health",
+      "description": "Check fuzzybee system health",
+      "command": "bin/fuzzybee-health"
+    },
+    {
+      "name": "fuzzybee_decompose",
+      "description": "Decompose a problem into verifiable units",
+      "command": "bin/fuzzybee-decompose"
+    },
+    {
+      "name": "fuzzybee_dashboard",
+      "description": "Start localhost dashboard on :3333",
+      "command": "bin/fuzzybee-dashboard"
+    },
+    {
+      "name": "fuzzybee_config",
+      "description": "Get/set configuration values",
+      "command": "bin/fuzzybee-config"
+    }
+  ]
+}

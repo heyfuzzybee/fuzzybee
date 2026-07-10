@@ -1,0 +1,12 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          VERSION=$(cat VERSION)
+          gh release create "v$VERSION"             --title "fable5-execute v$VERSION"             --notes "$(cat CHANGELOG.md | head -20)"

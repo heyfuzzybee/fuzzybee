@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$(cd "$SCRIPT_DIR/../lib" && pwd)"
+PYTHON="${PYTHON:-python3}"
+
+case "${1:-}" in
+    get)
+        key="${2:-}"
+        if [ -z "$key" ]; then
+            echo "Usage: fuzzybee-config get <key>" >&2
+            exit 1
+        fi
+        "$PYTHON" -c "
+import sys, json, os
+sys.path.insert(0, '$LIB_DIR')
+from memory import SQLiteMemoryAdapter
+m = SQLiteMemoryAdapter()
+v = m.read('config_' + '$key')
+print(v['value'] if v else 'off')
+"
+        ;;
+    set)
+        key="${2:-}"
+        val="${3:-}"
+        if [ -z "$key" ] || [ -z "$val" ]; then
+            echo "Usage: fuzzybee-config set <key> <value>" >&2
+            exit 1
+        fi
+        "$PYTHON" -c "
+import sys
+sys.path.insert(0, '$LIB_DIR')
+from memory import SQLiteMemoryAdapter
+m = SQLiteMemoryAdapter()
+m.write('config_' + '$key', {'value': '$val'})
+print('OK')
+"
+        ;;
+    *)
+        echo "Usage: fuzzybee-config {get|set} <key> [value]" >&2
+        exit 1
+        ;;
+esac

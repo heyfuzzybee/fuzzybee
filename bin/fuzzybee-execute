@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Fuzzybee CLI wrapper
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$(cd "$SCRIPT_DIR/../lib" && pwd)"
+PYTHON="${PYTHON:-python3}"
+
+case "${1:-}" in
+    health)
+        "$PYTHON" -c "
+import sys
+sys.path.insert(0, '$LIB_DIR')
+from engine import ExecutionEngine
+e = ExecutionEngine()
+h = e.check_health()
+print('HEALTHY' if h['engine'] == 'healthy' else 'UNHEALTHY')
+for k,v in h.items():
+    print(f'  {k}: {v}')
+"
+        ;;
+    decompose)
+        problem="${2:-}"
+        if [ -z "$problem" ]; then
+            echo "Usage: fuzzybee-execute decompose '<problem description>'" >&2
+            exit 1
+        fi
+        "$PYTHON" -c "
+import sys
+sys.path.insert(0, '$LIB_DIR')
+from engine import ExecutionEngine
+e = ExecutionEngine()
+units = e.decompose('$problem')
+for u in units:
+    print(f'  [{u.unit_type.value}] {u.task_id}: {u.subject}')
+    print(f'      pass: {u.pass_criteria}')
+"
+        ;;
+    execute)
+        echo "execute: not yet implemented in Phase 1" >&2
+        exit 1
+        ;;
+    verify)
+        echo "verify: not yet implemented in Phase 1" >&2
+        exit 1
+        ;;
+    report)
+        echo "report: not yet implemented in Phase 1" >&2
+        exit 1
+        ;;
+    *)
+        echo "Usage: fuzzybee-execute {health|decompose|execute|verify|report}" >&2
+        exit 1
+        ;;
+esac

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$(cd "$SCRIPT_DIR/../lib" && pwd)"
+PYTHON="${PYTHON:-python3}"
+exec "$PYTHON" -c "
+import sys
+sys.path.insert(0, '$LIB_DIR')
+from dashboard import DashboardServer
+DashboardServer(port=3333).run()
+"
