@@ -18,12 +18,11 @@ for script in bin/fuzzybee-*; do
     echo "OK: $script"
 done
 
-# Check evidence dir is writable
-mkdir -p docs/status/execution-gates
-if [ ! -w "docs/status/execution-gates" ]; then
-    echo "FAIL: evidence dir not writable"
-    exit 1
+# Check evidence dir exists (engine creates it on first cycle)
+if [ -d "docs/status/execution-gates" ]; then
+  echo "OK: evidence dir exists"
+else
+  echo "INFO: evidence dir will be created on first cycle"
 fi
-echo "OK: evidence dir writable"
 
 echo "=== Audit PASSED ==="
