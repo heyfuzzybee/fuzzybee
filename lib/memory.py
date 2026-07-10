@@ -141,7 +141,7 @@ class Mem0Adapter(MemoryAdapter):
         try:
             from mem0 import Memory
             self._mem0 = Memory()
-        except ImportError:
+        except Exception:
             self._mem0 = None
 
     def write(self, key: str, data: Dict[str, Any]) -> None:

@@ -23,7 +23,7 @@ class InstinctLogger:
         try:
             from mem0 import Memory
             self._mem0 = Memory()
-        except ImportError:
+        except Exception:
             self._mem0 = None
 
     def log_cycle(
