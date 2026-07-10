@@ -8,15 +8,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from decompose import Decomposer, ProblemClassifier, Unit, UnitType
-from gate import EvidenceRecord, GateRunner, GateStatus
-from learn import InstinctLogger
-from memory import JSONLMemoryAdapter, MemoryAdapter
+from .decompose import Decomposer, ProblemClassifier, Unit, UnitType
+from .gate import EvidenceRecord, GateRunner, GateStatus
+from .learn import InstinctLogger
+from .memory import JSONLMemoryAdapter, MemoryAdapter
 FileMemoryAdapter = JSONLMemoryAdapter  # backwards compat
-from report import ReportGenerator
-from session import SessionDetector
-from sla import SLAEnforcer
-from telemetry import TelemetryLogger, TelemetryTier
+from .report import ReportGenerator
+from .session import SessionDetector
+from .sla import SLAEnforcer
+from .telemetry import TelemetryLogger, TelemetryTier
 
 
 class ExecutionEngine:

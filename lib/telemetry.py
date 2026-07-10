@@ -20,7 +20,7 @@ class TelemetryLogger:
     """Log skill usage analytics with tiered privacy."""
 
     tier: TelemetryTier = TelemetryTier.OFF
-    log_dir: str = "~/.execute/analytics"
+    log_dir: str = "~/.fuzzybee/analytics"
 
     def __post_init__(self):
         self.log_path = Path(self.log_dir).expanduser() / "skill-usage.jsonl"

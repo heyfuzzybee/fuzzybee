@@ -13,7 +13,7 @@ from urllib.parse import parse_qs, urlparse
 class DashboardHandler(BaseHTTPRequestHandler):
     """Serve dashboard pages and API endpoints."""
 
-    db_path: str = "~/.execute/cycles.db"
+    db_path: str = "~/.fuzzybee/cycles.db"
 
     def log_message(self, format, *args):
         # Suppress default logging
@@ -386,7 +386,7 @@ pre {{ background: #0f172a; padding: 12px; border-radius: 8px; overflow-x: auto;
 class DashboardServer:
     """Run the dashboard on localhost:3333."""
 
-    def __init__(self, port: int = 3333, db_path: str = "~/.execute/cycles.db"):
+    def __init__(self, port: int = 3333, db_path: str = "~/.fuzzybee/cycles.db"):
         self.port = port
         self.db_path = db_path
 

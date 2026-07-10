@@ -3,15 +3,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB_DIR="$(cd "$SCRIPT_DIR/../lib" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 PYTHON="${PYTHON:-python3}"
 
 case "${1:-}" in
     health)
-        "$PYTHON" -c "
-import sys
-sys.path.insert(0, '$LIB_DIR')
-from engine import ExecutionEngine
+        PYTHONPATH="$PROJECT_DIR" "$PYTHON" -c "
+from lib.engine import ExecutionEngine
 e = ExecutionEngine()
 h = e.check_health()
 print('HEALTHY' if h['engine'] == 'healthy' else 'UNHEALTHY')
@@ -25,10 +23,9 @@ for k,v in h.items():
             echo "Usage: fuzzybee-execute decompose '<problem description>'" >&2
             exit 1
         fi
-        "$PYTHON" -c "
+        PYTHONPATH="$PROJECT_DIR" "$PYTHON" -c "
 import sys
-sys.path.insert(0, '$LIB_DIR')
-from engine import ExecutionEngine
+from lib.engine import ExecutionEngine
 e = ExecutionEngine()
 units = e.decompose('$problem')
 for u in units:

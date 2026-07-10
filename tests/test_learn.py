@@ -46,8 +46,15 @@ def test_learnings_file_created_on_first_write():
 
 def test_injection_sanitization_in_pattern_strings():
     # Patterns with special chars should still be loggable (JSON handles escaping)
-    logger = InstinctLogger(log_path="/tmp/fuzzybee-test-inject.jsonl")
-    logger.log_cycle("bug<script>", "PASS", 1, 100)
-    with open("/tmp/fuzzybee-test-inject.jsonl") as f:
-        data = json.loads(f.readline())
-    assert data["problem_type"] == "bug<script>"
+    import os
+    import tempfile
+    fd, tmp = tempfile.mkstemp(suffix=".jsonl")
+    os.close(fd)
+    try:
+        logger = InstinctLogger(log_path=tmp)
+        logger.log_cycle("bug<script>", "PASS", 1, 100)
+        with open(tmp) as f:
+            data = json.loads(f.readline())
+        assert data["problem_type"] == "bug<script>"
+    finally:
+        os.unlink(tmp)
