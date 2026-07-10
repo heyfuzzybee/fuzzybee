@@ -172,18 +172,24 @@ class Decomposer:
         ]
 
     def _decompose_generic(self, problem: str, sla_tight: bool = False) -> List[Unit]:
-        """Generic fallback (2 units): analyze → act."""
+        """Generic fallback (3 units): understand → build → verify."""
         return [
             Unit(
-                task_id="gen-01-analyze",
-                subject=f"Analyze: {problem}",
+                task_id="gen-01-understand",
+                subject=f"Understand: {problem}",
                 unit_type=UnitType.AUDIT,
-                pass_criteria="`bash -c 'echo analyzed'`",
+                pass_criteria="`bash -c 'echo spec_documented'`",
             ),
             Unit(
-                task_id="gen-02-act",
-                subject=f"Act: {problem}",
+                task_id="gen-02-implement",
+                subject=f"Implement: {problem}",
                 unit_type=UnitType.BUILD,
-                pass_criteria="`bash -c 'echo done'`",
+                pass_criteria="`bash -c 'test -f test_output.txt'`",
+            ),
+            Unit(
+                task_id="gen-03-verify",
+                subject=f"Verify: {problem}",
+                unit_type=UnitType.VERIFY,
+                pass_criteria="`bash -c 'python3 -c \"open(\\\"test_output.txt\\\").read()\" && echo content_produced'`",
             ),
         ]

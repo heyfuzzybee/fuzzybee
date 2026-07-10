@@ -19,3 +19,12 @@
   "duration_ms": 0.0
 }
 ```
+
+## STOP GATES (SKILL.md)
+
+| Gate | Condition | Action |
+|------|-----------|--------|
+| S1 | 8 tool calls OR 10 min wall clock | BLOCKED, file remaining as new task |
+| S2 | 3 consecutive gate failures on same unit | BLOCKED, write memory, report |
+| S3 | EvidenceRecord status != PASS | STOP, DO NOT report success |
+| S4 | DATABASE_URL contains "localhost" in deploy | BLOCKED, never deploy |

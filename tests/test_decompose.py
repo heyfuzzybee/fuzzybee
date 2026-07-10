@@ -38,11 +38,11 @@ def test_decompose_feature_returns_4_units():
 def test_decompose_bug_no_keyword_falls_back_to_generic():
     d = Decomposer()
     units = d.decompose("xyz123 something unknown")
-    assert len(units) == 2  # generic fallback
+    assert len(units) == 3  # generic fallback: understand → implement → verify
 
 
 def test_decompose_empty_string_returns_generic():
     d = Decomposer()
     units = d.decompose("")
-    assert len(units) == 2
+    assert len(units) == 3
     assert units[0].unit_type == UnitType.AUDIT
