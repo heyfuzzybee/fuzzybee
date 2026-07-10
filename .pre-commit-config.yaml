@@ -1,4 +1,10 @@
 repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.18.0
     hooks:
@@ -6,20 +12,32 @@ repos:
         args: ["--verbose"]
   - repo: local
     hooks:
-      - id: execute-health
-        name: execute health check
-        entry: bash scripts/fuzzybee-execute.sh health
+      - id: fuzzybee-health
+        name: fuzzybee health check
+        entry: bash bin/fuzzybee-execute health
         language: system
         pass_filenames: false
         always_run: true
-      - id: execute-tests
-        name: execute unit tests
-        entry: python3 -m pytest tests/ -x --timeout=30
+      - id: fuzzybee-tests
+        name: fuzzybee unit tests
+        entry: uv run pytest tests/ -x --timeout=30
         language: system
         pass_filenames: false
         always_run: true
-      - id: execute-secret-check
-        name: execute secret leak check
+      - id: fuzzybee-bats
+        name: fuzzybee bats tests
+        entry: bats tests/test_health.bats
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: fuzzybee-self-audit
+        name: fuzzybee self-audit
+        entry: bash scripts/self-audit.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: fuzzybee-secret-check
+        name: fuzzybee secret leak check
         entry: python3 -c "
 import sys, re
 patterns = [r'shpat_', r'shpss_', r'shpca_', r'atkn_', r'sk_live_', r'AKIA', r'sk-proj-']

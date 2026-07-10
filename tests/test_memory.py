@@ -1,7 +1,12 @@
-"""Tests for memory.py — JSONL, SQLite, mem0 adapters."""
+"""Tests for memory.py — JSONL, SQLite, mem0, AutoMemory adapters."""
 import tempfile
 
-from lib.memory import JSONLMemoryAdapter, SQLiteMemoryAdapter, Mem0Adapter
+from lib.memory import (
+    AutoMemoryAdapter,
+    JSONLMemoryAdapter,
+    Mem0Adapter,
+    SQLiteMemoryAdapter,
+)
 
 
 def test_jsonl_adapter_creates_memory_file():
@@ -32,9 +37,37 @@ def test_mem0_adapter_fallback_on_failure():
 
 def test_mem0_adapter_search_without_mem0():
     # mem0 not available — search falls through to SQLite
-    with tempfile.TemporaryDirectory() as td:
-        mem = Mem0Adapter()
-        mem.write("search-1", {"val": 1})
-        mem.write("search-2", {"val": 2})
-        results = mem.search("search", limit=5)
-        assert len(results) > 0
+    mem = Mem0Adapter()
+    mem.write("search-1", {"val": 1})
+    mem.write("search-2", {"val": 2})
+    results = mem.search("search", limit=5)
+    assert len(results) > 0
+
+
+def test_mem0_adapter_health_degraded_without_mem0():
+    mem = Mem0Adapter()
+    health = mem.health()
+    assert "status" in health
+    assert "mem0_available" in health
+    assert "recommendations" in health
+    assert len(health["recommendations"]) >= 1
+    assert "install" in health["recommendations"][0]
+
+
+def test_auto_adapter_fallback_to_jsonl_when_preferred_unavailable():
+    """Force fallback by requesting a non-existent preferred adapter."""
+    auto = AutoMemoryAdapter(preferred="nonexistent-adapter")
+    assert auto.active_tier in ("jsonl", "sqlite")
+    auto.write("test-key", {"val": 42})
+    result = auto.read("test-key")
+    assert result == {"val": 42}
+
+
+def test_auto_adapter_health_returns_tiers():
+    auto = AutoMemoryAdapter(preferred="nonexistent-adapter")
+    health = auto.health()
+    assert "active_tier" in health
+    assert "available_tiers" in health
+    assert "fallback_chain" in health
+    assert "tiers" in health
+    assert health["active_tier"] in ("sqlite", "jsonl")

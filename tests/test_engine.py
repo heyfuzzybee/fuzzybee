@@ -117,3 +117,49 @@ def test_evidence_json_schema():
     assert "gate_name" in data
     assert "status" in data
     assert "timestamp" in data
+
+
+def test_health_includes_recommendations():
+    engine = ExecutionEngine()
+    health = engine.check_health()
+    assert "recommendations" in health
+    assert isinstance(health["recommendations"], list)
+    for rec in health["recommendations"]:
+        assert "name" in rec
+        assert "installed" in rec
+
+
+def test_execute_handles_empty_pass_criteria():
+    engine = ExecutionEngine()
+    unit = Unit(
+        task_id="test-empty",
+        subject="Empty pass criteria",
+        unit_type=UnitType.VERIFY,
+        pass_criteria="",
+    )
+    from unittest.mock import patch, MagicMock
+    with patch("lib.gate.subprocess.run") as mock_run:
+        mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+        cycle = engine.execute(unit)
+    assert cycle["status"] in ("PASS", "FAIL", "BLOCKED", "ERROR")
+
+
+def test_engine_can_create_report_without_execute():
+    engine = ExecutionEngine()
+    unit = Unit(
+        task_id="pre-report",
+        subject="Report without executing",
+        unit_type=UnitType.VERIFY,
+        pass_criteria="`true`",
+    )
+    cycle = {
+        "cycle_number": 1,
+        "status": "SKIPPED",
+        "sla_violations": [],
+        "wall_clock_s": 0.0,
+        "tool_calls": 0,
+    }
+    report = engine.report(unit, cycle)
+    assert "# Cycle Report" in report
+    assert "SKIPPED" in report
+

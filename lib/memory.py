@@ -176,3 +176,109 @@ class Mem0Adapter(MemoryAdapter):
             except Exception:
                 pass
         return self._fallback.search(query, limit)
+
+    def health(self) -> Dict[str, Any]:
+        """Return degradation status and recommendations."""
+        status = "healthy" if self._mem0 else "degraded"
+        failures = []
+        if not self._mem0:
+            failures.append("mem0 package not installed (pip install mem0ai)")
+        return {
+            "status": status,
+            "mem0_available": self._mem0 is not None,
+            "sqlite_available": True,
+            "jsonl_available": True,
+            "failure_reason": failures[0] if failures else None,
+            "recommendations": [
+                {
+                    "name": "mem0-integration",
+                    "source": "a5c-ai/mcp-mem0",
+                    "gap": "Long-term semantic memory with vector search",
+                    "install": "pip install mem0ai>=2.0.11",
+                    "why": "Multi-level memory (user/session/agent), 60K GitHub stars, cuts token costs via intelligent filtering",
+                },
+                {
+                    "name": "agent-memory-systems",
+                    "source": "coleam00/mcp-mem0",
+                    "gap": "Memory type architecture (episodic/semantic/procedural)",
+                    "install": "pip install mem0ai && claude mcp add mem0 -- npx @mcp-mem0/server",
+                    "why": "Covers chunking strategies, embedding quality, retrieval patterns; anti-pattern detection",
+                },
+            ],
+        }
+
+
+class AutoMemoryAdapter(MemoryAdapter):
+    """Auto-select best available adapter: mem0 → SQLite → JSONL.
+
+    Godlevel pattern from 60K⭐ mem0 ecosystem:
+    - Silent on success: uses best tier available
+    - Noisy on gaps: health() reports degradation with actionable fixes
+    - Zero deps guaranteed: always degrades to JSONL
+    """
+
+    def __init__(
+        self,
+        preferred: str = "mem0",
+        fallback_chain: Optional[List[str]] = None,
+    ):
+        self.fallback_chain = fallback_chain or ["sqlite", "jsonl"]
+        self._adapters: Dict[str, MemoryAdapter] = {}
+        self._active: Optional[str] = None
+
+        # Try preferred first
+        if preferred == "mem0":
+            try:
+                self._adapters["mem0"] = Mem0Adapter()
+                self._active = "mem0"
+            except Exception:
+                pass
+
+        # Fill fallbacks
+        if not self._active or "sqlite" in self.fallback_chain:
+            sqlite_key = "sqlite"
+            if sqlite_key not in self._adapters:
+                try:
+                    self._adapters[sqlite_key] = SQLiteMemoryAdapter()
+                    if not self._active:
+                        self._active = sqlite_key
+                except Exception:
+                    pass
+
+        if not self._active or "jsonl" in self.fallback_chain:
+            jsonl_key = "jsonl"
+            if jsonl_key not in self._adapters:
+                self._adapters[jsonl_key] = JSONLMemoryAdapter()
+                if not self._active:
+                    self._active = jsonl_key
+
+    @property
+    def active(self) -> MemoryAdapter:
+        return self._adapters[self._active]
+
+    @property
+    def active_tier(self) -> str:
+        return self._active or "none"
+
+    def write(self, key: str, data: Dict[str, Any]) -> None:
+        self.active.write(key, data)
+
+    def read(self, key: str) -> Optional[Dict[str, Any]]:
+        return self.active.read(key)
+
+    def search(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+        return self.active.search(query, limit)
+
+    def health(self) -> Dict[str, Any]:
+        tiers = {}
+        for name, adapter in self._adapters.items():
+            if hasattr(adapter, "health"):
+                tiers[name] = adapter.health()
+            else:
+                tiers[name] = {"status": "available"}
+        return {
+            "active_tier": self.active_tier,
+            "available_tiers": list(self._adapters.keys()),
+            "fallback_chain": self.fallback_chain,
+            "tiers": tiers,
+        }

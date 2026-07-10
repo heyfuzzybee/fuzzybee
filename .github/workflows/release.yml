@@ -5,8 +5,23 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install ruff pytest pytest-cov
+      - run: ruff check lib/ bin/ tests/
+      - run: python3 -m pytest tests/ --cov=lib/ --cov-fail-under=80
+      - name: Install bats
+        run: |
+          git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
+          /tmp/bats/install.sh /usr/local
+      - run: bats tests/test_health.bats
+      - run: bash scripts/self-audit.sh
       - run: |
           VERSION=$(cat VERSION)
-          gh release create "v$VERSION"             --title "fable5-execute v$VERSION"             --notes "$(cat CHANGELOG.md | head -20)"
+          gh release create "v$VERSION" \
+            --title "fuzzybee v$VERSION" \
+            --notes "$(cat CHANGELOG.md | head -20)"

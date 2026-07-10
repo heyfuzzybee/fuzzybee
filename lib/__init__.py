@@ -7,7 +7,8 @@ from .gate import GateRunner, EvidenceRecord, GateStatus
 from .decompose import ProblemClassifier, Decomposer
 from .sla import SLAEnforcer
 from .learn import InstinctLogger
-from .memory import MemoryAdapter, SQLiteMemoryAdapter, JSONLMemoryAdapter
+from .memory import MemoryAdapter, SQLiteMemoryAdapter, JSONLMemoryAdapter, AutoMemoryAdapter
+from .recommender import ToolRecommender, ToolRecommendation
 from .report import ReportGenerator
 from .session import SessionDetector
 from .telemetry import TelemetryLogger
@@ -24,8 +25,11 @@ __all__ = [
     "SLAEnforcer",
     "InstinctLogger",
     "MemoryAdapter",
+    "AutoMemoryAdapter",
     "SQLiteMemoryAdapter",
     "JSONLMemoryAdapter",
+    "ToolRecommender",
+    "ToolRecommendation",
     "ReportGenerator",
     "SessionDetector",
     "TelemetryLogger",

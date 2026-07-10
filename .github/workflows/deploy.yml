@@ -3,14 +3,19 @@ on:
   push:
     branches: [main]
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install pytest
+      - run: pip install ruff pytest pytest-cov
+      - run: ruff check lib/ bin/ tests/
       - run: python3 -m pytest tests/ --cov=lib/ --cov-fail-under=80
-      - run: bash tests/test_health.bats
+      - name: Install bats
+        run: |
+          git clone --depth 1 https://github.com/bats-core/bats-core.git /tmp/bats
+          /tmp/bats/install.sh /usr/local
+      - run: bats tests/test_health.bats
+      - run: bash scripts/self-audit.sh
       - run: bash scripts/check-secret-leaks.sh || true
-      # Railway deploy: railway up --service fable5-execute

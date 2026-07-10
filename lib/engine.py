@@ -13,6 +13,7 @@ from .gate import EvidenceRecord, GateRunner, GateStatus
 from .learn import InstinctLogger
 from .memory import JSONLMemoryAdapter, MemoryAdapter
 FileMemoryAdapter = JSONLMemoryAdapter  # backwards compat
+from .recommender import ToolRecommender
 from .report import ReportGenerator
 from .session import SessionDetector
 from .sla import SLAEnforcer
@@ -37,6 +38,7 @@ class ExecutionEngine:
         self.telemetry = TelemetryLogger()
         self.learner = InstinctLogger()
         self.memory = memory_adapter or FileMemoryAdapter()
+        self.recommender = ToolRecommender()
         self._cycle_count = 0
 
     # ── Health ───────────────────────────────────────────────
@@ -52,6 +54,7 @@ class ExecutionEngine:
             "gap_auditor": self._check_script("scripts/memory_gap_auditor_v2.py"),
             "skill_compliance": self._check_script("scripts/check-14-skill-compliance.sh"),
             "omc": self._check_script("scripts/check-omc-compliance.sh"),
+            "recommendations": self.recommender.health_report(),
         }
         return health
 
