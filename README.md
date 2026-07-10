@@ -1,34 +1,28 @@
 # Fuzzybee
 
-Recursive verify skill for Claude Code. Reason → Act → Verify → Prove → Recurse with evidence gates.
+Reason → Act → Verify → Prove → Recurse with evidence gates.
 
-## Quick Start
-
-```bash
-# Install
-bash scripts/install.sh
-
-# Health check
-bash scripts/execute.sh health
-
-# Decompose a problem
-bash scripts/execute.sh decompose "bug: login crash on empty email"
-
-# Run a full cycle
-bash scripts/execute.sh run "bug: login crash on empty email"
-```
-
-### npm
+## Install
 
 ```bash
+# Option A: npm (primary)
 npm install -g @heyfuzzybee/fuzzybee
 fuzzybee health
-fuzzybee decompose "bug: login crash on empty email"
+
+# Option B: curl (zero dependencies)
+curl -sf https://raw.githubusercontent.com/heyfuzzybee/fuzzybee/main/scripts/install.sh | sh
+fuzzybee health
 ```
 
-## Architecture
+## Use
 
-See `sections/` for contract, workflow, gates, and integration docs.
+```bash
+fuzzybee health                          # Check everything works
+fuzzybee decompose "bug: login crash"    # Plan the work
+fuzzybee verify --task-id 1              # Gate a claim
+fuzzybee dashboard                       # Localhost :3333
+fuzzybee-config set telemetry community  # Opt in
+```
 
 ## Tests
 

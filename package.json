@@ -1,23 +1,32 @@
 {
   "name": "@heyfuzzybee/fuzzybee",
   "version": "0.1.0",
-  "description": "Recursive verify skill for Claude Code",
+  "description": "Recursive verify skill — Reason → Act → Verify → Prove → Recurse with evidence gates",
   "bin": {
-    "fuzzybee-execute": "bin/fuzzybee-execute"
+    "fuzzybee": "bin/fuzzybee-execute",
+    "fuzzybee-health": "bin/fuzzybee-health",
+    "fuzzybee-decompose": "bin/fuzzybee-decompose",
+    "fuzzybee-verify": "bin/fuzzybee-verify",
+    "fuzzybee-report": "bin/fuzzybee-report",
+    "fuzzybee-dashboard": "bin/fuzzybee-dashboard",
+    "fuzzybee-config": "bin/fuzzybee-config"
   },
   "scripts": {
-    "postinstall": "bash scripts/fuzzybee-install.sh"
+    "postinstall": "bash scripts/install.sh",
+    "health": "bash bin/fuzzybee-health",
+    "test": "uv run pytest tests/ --cov=lib/"
   },
   "files": [
     "bin/",
     "lib/",
     "scripts/",
     "sections/",
+    "skills/",
     "SKILL.md",
     "VERSION",
     "CHANGELOG.md",
     "README.md"
   ],
-  "keywords": ["claude", "skill", "verify", "execution"],
+  "keywords": ["claude", "skill", "verify", "execution", "fuzzybee"],
   "license": "MIT"
 }
